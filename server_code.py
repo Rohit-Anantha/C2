@@ -27,7 +27,7 @@ def server_program():
         if not data:
             # if data is not received break
             break
-        data = f.decrypt(data)
+        data = f.decrypt(str(data))
         print("from connected user: " + str(data))
         command = str(data)
         
