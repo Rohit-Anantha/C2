@@ -21,8 +21,8 @@ def client_program():
 
         # encrypt before sending 
 
-        client_socket.send(f.encrypt(message.encode()))  # send message
-        data = f.decrypt(str(client_socket.recv(1024).decode()))  # receive response
+        client_socket.send(f.encrypt(bytes(message.encode())))  # send message
+        data = f.decrypt(client_socket.recv(1024).decode()) # receive response
 
         print('Received from server: ' + data)  # show in terminal
 
