@@ -13,6 +13,7 @@ def client_program():
     port = 1337  # socket server port number
 
     client_socket = socket.socket()  # instantiate
+    client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     client_socket.connect((host, port))  # connect to the server
 
     message = input(" -> ")  # take input
@@ -22,9 +23,9 @@ def client_program():
         # encrypt before sending 
 
         client_socket.send(f.encrypt(bytes(message.encode())))  # send message
-        data = f.decrypt(client_socket.recv(1024).decode()) # receive response
+        data = f.decrypt(client_socket.recv(1024)) # receive response
 
-        print('Received from server: ' + data)  # show in terminal
+        print('Received from server: \n' + data.decode())  # show in terminal
 
         message = input(" -> ")  # again take input
         # message will be a command

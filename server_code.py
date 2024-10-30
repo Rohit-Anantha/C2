@@ -16,47 +16,46 @@ def server_program():
     
     f = Fernet(key)
 
+    # while True:
+    server_socket = socket.socket()  # get instance
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.bind(('', port))  # bind host address and port together
+    server_socket.listen(10)
+    
+    
+    print('waiting for connection')
+    conn, address = server_socket.accept()  # accept new connection
+    print("Connection from: " + str(address))
+    curr_time = time.localtime()
+    print('at: ', curr_time.tm_hour, ':',curr_time.tm_min, ':', curr_time.tm_sec)
+
     while True:
-        server_socket = socket.socket()  # get instance
-        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_socket.bind((host, port))  # bind host address and port together
-        server_socket.listen(10)
-        print('waiting for connection')
-        conn, address = server_socket.accept()  # accept new connection
-        print("Connection from: " + str(address))
-        curr_time = time.localtime()
-        print('at: ', curr_time.tm_hour, ':',curr_time.tm_min, ':', curr_time.tm_sec)
+        # receive data stream. it won't accept data packet greater than 1024 bytes
+        data = conn.recv(1024).decode()
+        if not data:
+            # if data is not received break
+            break
+        data = str(f.decrypt(data).decode())
 
-        while True:
-            # receive data stream. it won't accept data packet greater than 1024 bytes
-            data = conn.recv(1024).decode()
-            if not data:
-                # if data is not received break
-                break
-            data = str(f.decrypt(data).decode())
-
-            print(data)
-            print("from connected user: " + data)
-            command = data
+        print(data)
+        print("from connected user: " + data)
+        command = data
+        
+        # before running commands auth using AES
+        # we need a private key
+        try:
+            result = subprocess.run(command.split(" "), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
-            # before running commands auth using AES
-            # we need a private key
-            
-            try:
-                result = subprocess.run(command.split(" "), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                stdout_output = result.stdout.decode("utf-8")
-                stderr_output = result.stderr.decode("utf-8")
-                print(stdout_output, stderr_output)
-                res = f.encrypt(stdout_output)
-                conn.send(res.encode())
-            except :
-                print("Something Messed Up")
-              # send data to the client
-        conn.close()  # close the connection
-        print('outer loop')
-        # wait at least a minute before retrying the connection
-        # curr_time.tm_min += 1
-        print('current time: ', curr_time.tm_hour, ':',curr_time.tm_min, ':', curr_time.tm_sec)
+        except :
+            print("Something Messed Up")
+            # send data to the client
+        res = f.encrypt(result.stdout)
+        conn.send(res)
+    conn.close()  # close the connection
+    print('outer loop')
+    # wait at least a minute before retrying the connection
+    # curr_time.tm_min += 1
+    print('current time: ', curr_time.tm_hour, ':',curr_time.tm_min, ':', curr_time.tm_sec)
             
 
 if __name__ == '__main__':
