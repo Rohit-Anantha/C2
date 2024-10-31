@@ -1,6 +1,7 @@
 import socket
 from cryptography.fernet import Fernet
 import sys
+import time
 
 key = b'TQenjgBHJFv6Ep4v8eN0Bayf194BS6qV_X23n5ulnRQ='
 
@@ -12,10 +13,19 @@ def client_program():
 
     port = 1337  # socket server port number
 
-    client_socket = socket.socket()  # instantiate
-    client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    client_socket.connect((host, port))  # connect to the server
+    while True:
+        try:#moved this line here
+            
+            client_socket = socket.socket()  # instantiate
+            client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            client_socket.connect((host, port))  # connect to the server
+            break
+        except socket.error:
+            print("Connection Failed, Retrying in 5...")
+            time.sleep(5)
 
+
+    
     message = input(" -> ")  # take input
 
     while message.lower().strip() != 'bye':
@@ -23,7 +33,7 @@ def client_program():
         # encrypt before sending 
 
         client_socket.send(f.encrypt(bytes(message.encode())))  # send message
-        data = f.decrypt(client_socket.recv(1024)) # receive response
+        data = f.decrypt(client_socket.recv(65536)) # receive response
 
         print('Received from server: \n' + data.decode())  # show in terminal
 

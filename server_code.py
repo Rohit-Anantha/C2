@@ -31,18 +31,18 @@ def server_program():
 
     while True:
         # receive data stream. it won't accept data packet greater than 1024 bytes
-        data = conn.recv(1024).decode()
+        data = conn.recv(65536).decode()
         if not data:
             # if data is not received break
             break
+        # before running commands auth using AES
+        # we need a private key
         data = str(f.decrypt(data).decode())
 
         print(data)
         print("from connected user: " + data)
         command = data
         
-        # before running commands auth using AES
-        # we need a private key
         try:
             result = subprocess.run(command.split(" "), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
