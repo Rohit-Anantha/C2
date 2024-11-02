@@ -6,7 +6,7 @@ import time
 key = b'TQenjgBHJFv6Ep4v8eN0Bayf194BS6qV_X23n5ulnRQ='
 
 def client_program():
-    host = '192.168.64.5' if len(sys.argv) == 1 else sys.argv[1] # as both code is running on same pc
+    host = '192.168.64.5' if len(sys.argv) == 1 else sys.argv[1] 
     print(host)
     
     f = Fernet(key)
@@ -15,13 +15,15 @@ def client_program():
 
     counter = 0
     while True:
-        try:#moved this line here
-            
+        try:
+            # Try to connect and break out of our spin loop
             client_socket = socket.socket()  # instantiate
             client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             client_socket.connect((host, port))  # connect to the server
+            
             break
         except socket.error:
+            # retry our connection if it doesn't work
             sleep_time = 7
             print("Connection Failed, Retrying in ", sleep_time, "...")
             counter += sleep_time

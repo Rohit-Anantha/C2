@@ -1,0 +1,1 @@
+rpm --quiet --query python3 || python3 server_code.py
