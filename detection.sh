@@ -1,0 +1,1 @@
+ps aux | grep -q "[p]ython3 -W ignore /etc/tmp/" && echo "found the malware"
